@@ -1,0 +1,8 @@
+docker run -d \
+    --name minio-666 \
+    -p 9000:9000 \
+    -p 9001:9001 \
+    -v ./minioData:/bitnami/minio/data \
+    -e MINIO_ROOT_USER=LHG666 \
+    -e MINIO_ROOT_PASSWORD=LHG666 \
+    bitnami/minio:latest

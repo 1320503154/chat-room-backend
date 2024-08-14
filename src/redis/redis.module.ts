@@ -15,8 +15,9 @@ dotenv.config();
         const client = createClient({ // 创建Redis客户端实例
             socket: { 
                 host: process.env.REDIS_HOST, // Redis服务器主机
-                port: Number(process.env.REDIS_PORT) // Redis服务器端口
+                port: Number(process.env.REDIS_PORT), // Redis服务器端口
             },
+            password: process.env.REDIS_PASSWORD, // Redis服务器密码
             database: 2 // 选择使用的Redis数据库
         });
         await client.connect(); // 连接到Redis服务器
