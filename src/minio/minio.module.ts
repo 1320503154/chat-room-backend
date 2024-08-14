@@ -1,6 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { MinioController } from './minio.controller';
 import * as Minio from 'minio';
+//导入环境变量模块
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Global()
 @Module({
@@ -9,11 +12,11 @@ import * as Minio from 'minio';
             provide: 'MINIO_CLIENT',
             async useFactory() {
                 const client = new Minio.Client({
-                        endPoint: 'localhost',
-                        port: 9000,
+                        endPoint: process.env.MINIO_ENDPOINT,
+                        port: Number(process.env.MINIO_PORT),
                         useSSL: false,
-                        accessKey: 'oJhfqfWSNNmtN65tH233',
-                        secretKey: 'daVL0MFRhf2UOQIvm7KTZCrX3l7B5E9yw5ttFqok'
+                        accessKey: process.env.MINIO_ACCESS_KEY,
+                        secretKey: process.env.MINIO_SECRET_KEY
                     })
                 return client;
             }
