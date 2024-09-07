@@ -159,42 +159,57 @@ export class ChatroomService {
         return {...chatroom, users: await this.members(id)} // 返回聊天室信息和成员信息
     }
 
-    // 加入聊天室
-    async join(id: number, username: string) {
-        // 根据ID查询聊天室信息
-        const chatroom = await this.prismaService.chatroom.findUnique({
-            where: {
-                id // 聊天室ID
-            }
-        });
-
-        // 如果是单聊，抛出异常
-        if(chatroom.type === false) {
-            throw new BadRequestException('一对一聊天室不能加人');
+// 加入聊天室
+async join(id: number, username: string) {
+    // 根据ID查询聊天室信息
+    const chatroom = await this.prismaService.chatroom.findUnique({
+        where: {
+            id // 聊天室ID
         }
+    });
 
-        // 根据用户名查询用户信息
-        const user = await this.prismaService.user.findUnique({
-            where: {
-                username // 用户名
-            }
-        });
-
-        // 如果用户不存在，抛出异常
-        if(!user) {
-            throw new BadRequestException('用户不存在');
-        }
-
-        // 将用户加入聊天室
-        await this.prismaService.userChatroom.create({
-            data: {
-                userId: user.id, // 用户ID
-                chatroomId: id // 聊天室ID
-            }
-        })
-
-        return chatroom.id; // 返回聊天室ID
+    // 如果是单聊，抛出异常
+    if (chatroom.type === false) {
+        throw new BadRequestException('一对一聊天室不能加人');
     }
+
+    // 根据用户名查询用户信息
+    const user = await this.prismaService.user.findUnique({
+        where: {
+            username // 用户名
+        }
+    });
+
+    // 如果用户不存在，抛出异常
+    if (!user) {
+        throw new BadRequestException('用户不存在');
+    }
+
+    // 检查用户是否已经在聊天室中
+    const existingRecord = await this.prismaService.userChatroom.findUnique({
+        where: {
+            userId_chatroomId: {
+                userId: user.id,
+                chatroomId: id,
+            },
+        },
+    });
+
+    // 如果记录已经存在，抛出异常或执行其他逻辑
+    if (existingRecord) {
+        throw new BadRequestException('用户已经在聊天室中');
+    }
+
+    // 将用户加入聊天室
+    await this.prismaService.userChatroom.create({
+        data: {
+            userId: user.id, // 用户ID
+            chatroomId: id // 聊天室ID
+        }
+    });
+
+    return chatroom.id; // 返回聊天室ID
+}
 
     // 退出聊天室
     async quit(id: number, userId: number) {
