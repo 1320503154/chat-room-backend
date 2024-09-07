@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Result } from 'src/utils/result';
 
 @Injectable()
 export class ChatroomService {
@@ -30,8 +31,7 @@ export class ChatroomService {
                 chatroomId: id
             }
         });
-        return id;
-        // return '创建成功'
+        return Result.success({"chatRoomId":id}, '创建一对一成功');
     }
 
     async createGroupChatroom(name: string, userId: number) {
@@ -47,7 +47,7 @@ export class ChatroomService {
                 chatroomId: id
             }
         });
-        return '创建成功'
+        return Result.success({"chatRoomId":id}, '创建群聊成功');
     }
 
     async list(userId: number, name: string) {
@@ -101,7 +101,7 @@ export class ChatroomService {
             })
         }
         
-        return res;
+        return Result.success(res);
     }
 
     async members(chatroomId: number) {
@@ -128,7 +128,7 @@ export class ChatroomService {
                 email: true
             }
         });
-        return users;
+        return Result.success(users);
     }
 
     async info(id: number) {

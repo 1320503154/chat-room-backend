@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 
 import { SwaggerModule,DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ResultInterceptor } from './interceptors/result.interceptor';
+
 // 定义异步启动函数
 async function bootstrap() {
   // 创建 Nest 应用实例
@@ -14,6 +16,8 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs',app,document);
   // 使用全局验证管道，启用数据转换
   app.useGlobalPipes(new ValidationPipe({ transform: true}));
+
+  app.useGlobalInterceptors(new ResultInterceptor());
 
   // 启用跨域资源共享，并暴露 Token 头
   app.enableCors({
