@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Query, BadRequestException } from '@nestjs/common'; // 从 @nestjs/common 导入所需的装饰器和异常类
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, Query, BadRequestException, Logger } from '@nestjs/common'; // 从 @nestjs/common 导入所需的装饰器和异常类
 import { UserService } from './user.service'; // 导入 UserService
 import { RegisterUserDto } from './dto/register-user.dto'; // 导入 RegisterUserDto 数据传输对象
 import { EmailService } from 'src/email/email.service'; // 导入 EmailService
@@ -88,15 +88,20 @@ export class UserController {
     if(!address) { // 如果地址为空，抛出异常
       throw new BadRequestException('邮箱地址不能为空');
     }
-    const code = Math.random().toString().slice(2,8); // 生成随机验证码
+    try{
+      const code = Math.random().toString().slice(2,8); // 生成随机验证码
 
-    await this.redisService.set(`update_password_captcha_${address}`, code, 10 * 60); // 将验证码存储到 Redis，过期时间为10分钟
-
-    await this.emailService.sendMail({ // 发送邮件
-      to: address,
-      subject: '更改密码验证码',
-      html: `<p>你的更改密码验证码是 ${code}</p>`
-    });
+      await this.redisService.set(`update_password_captcha_${address}`, code, 10 * 60); // 将验证码存储到 Redis，过期时间为10分钟
+  
+      await this.emailService.sendMail({ // 发送邮件
+        to: address,
+        subject: '更改密码验证码',
+        html: `<p>你的更改密码验证码是 ${code}</p>`
+      });
+    }catch(e){
+      Logger.error(`发送失败: ${e.message}`); // 记录发送失败信息
+      throw new BadRequestException(`发送失败: ${e.message}`); // 发送失败时抛出异常
+    }
     return '发送成功'; // 返回发送成功信息
   }
 
