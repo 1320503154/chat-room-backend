@@ -6,7 +6,6 @@ import * as moment from 'moment';
 import { RequireLogin } from 'src/custom.decorator';
 
 @ApiTags('minio')
-@RequireLogin()
 @Controller('minio')
 export class MinioController {
 
@@ -16,9 +15,9 @@ export class MinioController {
     @Get('presignedUrl')
     @ApiOperation({ summary: '获取预签名的上传URL' })
     @ApiQuery({ name: 'name', required: true, description: '对象名称' })
+    @RequireLogin()
     async presignedPutObject(@Query('name') name: string) {
       const expireTime = Number(process.env.ALIYUN_OSS_EXPIRE_TIME);
-      console.log('In minio.controller.ts ALIYUN_OSS_EXPIRE_TIME::: ', process.env.ALIYUN_OSS_EXPIRE_TIME);
       const date = new Date();
       date.setSeconds(date.getSeconds() + expireTime);
   
