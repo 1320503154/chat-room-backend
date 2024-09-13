@@ -13,9 +13,6 @@ dotenv.config();
             provide: 'MINIO_CLIENT',
             async useFactory() {
                 const { ALIYUN_OSS_ACCESS_KEY_ID, ALIYUN_OSS_ACCESS_KEY_SECRET, ALIYUN_OSS_ROLE_ARN } = process.env;
-                console.log('In minio.module.ts ALIYUN_OSS_ACCESS_KEY_ID::: ', ALIYUN_OSS_ACCESS_KEY_ID);
-                console.log('In minio.module.ts ALIYUN_OSS_ACCESS_KEY_SECRET::: ', ALIYUN_OSS_ACCESS_KEY_SECRET);
-                console.log('In minio.module.ts ALIYUN_OSS_ROLE_ARN::: ', ALIYUN_OSS_ROLE_ARN);
                
                 const sts = new STS({
                   accessKeyId: ALIYUN_OSS_ACCESS_KEY_ID,

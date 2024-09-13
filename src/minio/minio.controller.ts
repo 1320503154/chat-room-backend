@@ -3,8 +3,10 @@ import * as OSS from 'ali-oss';
 import { STS } from 'ali-oss';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import * as moment from 'moment';
+import { RequireLogin } from 'src/custom.decorator';
 
 @ApiTags('minio')
+@RequireLogin()
 @Controller('minio')
 export class MinioController {
 
